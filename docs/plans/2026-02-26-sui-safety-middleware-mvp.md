@@ -662,3 +662,20 @@ git tag -a v0.1.0-hackathon-mvp -m "Sui safety middleware MVP"
 - [ ] 审计日志可查询可回放
 - [ ] 异常路径可安全回退
 - [ ] 3-5 分钟内可完成路演演示
+
+## 任务10验证证据（执行时间：2026-02-26 16:29:32 +0800）
+
+- `npm run lint`
+  - 结果：PASS
+  - 说明：ESLint 已正常加载配置并完成 `.ts/.tsx` 检查。
+
+- `npm run test`
+  - 结果：PASS
+  - backend：10 passed, 0 failed
+  - frontend：3 passed, 0 failed
+
+- `/Users/yhb/bin/sui move test --path contracts/safety_middleware`
+  - 结果：PASS
+  - Move tests：2 passed, 0 failed
+
+结论：任务10最终验证门通过。
