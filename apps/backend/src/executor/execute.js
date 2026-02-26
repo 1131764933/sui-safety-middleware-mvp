@@ -1,7 +1,6 @@
 export async function executeWithGate(input, deps) {
   const { txDigest, action, approved, signed } = input;
 
-  // 高风险交易必须先人工确认
   if (action === 'review' && !approved) {
     const blocked = {
       txDigest,
@@ -13,7 +12,6 @@ export async function executeWithGate(input, deps) {
     return blocked;
   }
 
-  // 所有可执行交易必须有签名
   if (!signed) {
     const rejected = {
       txDigest,
@@ -25,16 +23,27 @@ export async function executeWithGate(input, deps) {
     return rejected;
   }
 
-  const submitResult = await deps.submitTx({ txDigest, action });
-  const successAudit = {
-    txDigest,
-    action,
-    status: submitResult.status ?? 'success'
-  };
-  await deps.writeAudit(successAudit);
+  try {
+    const submitResult = await deps.submitTx({ txDigest, action });
+    const successAudit = {
+      txDigest,
+      action,
+      status: submitResult.status ?? 'success'
+    };
+    await deps.writeAudit(successAudit);
 
-  return {
-    txDigest,
-    status: successAudit.status
-  };
+    return {
+      txDigest,
+      status: successAudit.status
+    };
+  } catch {
+    const failed = {
+      txDigest,
+      action,
+      status: 'blocked',
+      reason: 'submit_failed'
+    };
+    await deps.writeAudit(failed);
+    return failed;
+  }
 }
