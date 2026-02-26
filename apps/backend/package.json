@@ -1,0 +1,10 @@
+{
+  "name": "@sui-safety-middleware/backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p ../../tsconfig.json --noEmit",
+    "test": "echo \"No backend tests yet\" && exit 0",
+    "lint": "echo \"No backend lint config yet\" && exit 0"
+  }
+}
