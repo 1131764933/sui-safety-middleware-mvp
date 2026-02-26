@@ -135,6 +135,11 @@
       .hero-text p {
         margin: 0;
       }
+      .hint {
+        font-size: 12px;
+        color: var(--sub);
+        margin-top: 6px;
+      }
       @media (max-width: 640px) {
         .grid {
           grid-template-columns: 1fr;
@@ -172,6 +177,23 @@
       <div class="card">
         <div class="grid">
           <div>
+            <label for="network">网络</label>
+            <input id="network" value="testnet" disabled />
+          </div>
+          <div>
+            <label for="packageId">Package ID（已发布）</label>
+            <input id="packageId" value="0xab52ad97fc2a24e3070b7999fc7eeca5baef006269ac39245f3da7d5caecd5fd" />
+          </div>
+          <div>
+            <label for="walletAddress">钱包地址</label>
+            <input id="walletAddress" placeholder="点击连接钱包后自动填充" readonly />
+            <div class="hint">需要安装 Sui Wallet 浏览器插件</div>
+          </div>
+          <div>
+            <label>链上模块</label>
+            <input value="audit::create_and_transfer" readonly />
+          </div>
+          <div>
             <label for="address">地址</label>
             <input id="address" value="0x123" />
           </div>
@@ -192,10 +214,13 @@
 
       <div class="card">
         <div class="actions">
+          <button id="btnConnectWallet">0) 连接钱包</button>
           <button id="btnPrecheck">1) 预审</button>
           <button id="btnConfirm" disabled>2) 人工确认</button>
-          <button id="btnExecute" disabled>3) 执行</button>
-          <button id="btnRefreshAudit">4) 刷新审计</button>
+          <button id="btnExecute" disabled>3) 执行（后端）</button>
+          <button id="btnWriteOnchain" disabled>4) 上链写审计</button>
+          <button id="btnLoadOnchain" disabled>5) 读取链上审计</button>
+          <button id="btnRefreshAudit">6) 刷新后端审计</button>
         </div>
       </div>
 
@@ -205,7 +230,7 @@
       </div>
 
       <div class="card">
-        <h1 style="font-size:16px">审计日志</h1>
+        <h1 style="font-size:16px">后端审计日志</h1>
         <table>
           <thead>
             <tr>
@@ -216,6 +241,21 @@
             </tr>
           </thead>
           <tbody id="auditRows"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h1 style="font-size:16px">链上审计对象（当前钱包拥有）</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>objectId</th>
+              <th>txDigest(raw)</th>
+              <th>action(raw)</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody id="onchainRows"></tbody>
         </table>
       </div>
     </div>

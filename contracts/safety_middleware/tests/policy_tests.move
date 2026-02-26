@@ -15,7 +15,7 @@ module safety_middleware::policy_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = 1001)]
+    #[expected_failure(abort_code = policy::E_NOT_OWNER, location = safety_middleware::policy)]
     fun test_update_limit_unauthorized() {
         let mut ctx = tx_context::dummy();
         let owner = @0x123;

@@ -45,11 +45,15 @@ test('有 OPENAI_API_KEY 且 API 失败时自动回退模板', async () => {
 
 test('有 OPENAI_API_KEY 时可返回真实 API 文本', async () => {
   const prev = process.env.OPENAI_API_KEY;
+  const prevModel = process.env.OPENAI_MODEL;
+  const prevBase = process.env.OPENAI_BASE_URL;
   process.env.OPENAI_API_KEY = 'dummy-key';
+  process.env.OPENAI_MODEL = 'deepseek-v3-250324';
+  process.env.OPENAI_BASE_URL = 'https://api.deepseek.com';
 
   const okFetch = async () => ({
     ok: true,
-    json: async () => ({ output_text: 'AI解释：该交易风险可控，建议继续执行。' })
+    json: async () => ({ choices: [{ message: { content: 'AI解释：该交易风险可控，建议继续执行。' } }] })
   });
 
   const text = await explainRisk(
@@ -60,6 +64,10 @@ test('有 OPENAI_API_KEY 时可返回真实 API 文本', async () => {
 
   if (prev) process.env.OPENAI_API_KEY = prev;
   else delete process.env.OPENAI_API_KEY;
+  if (prevModel) process.env.OPENAI_MODEL = prevModel;
+  else delete process.env.OPENAI_MODEL;
+  if (prevBase) process.env.OPENAI_BASE_URL = prevBase;
+  else delete process.env.OPENAI_BASE_URL;
 });
 
 test('审计摘要可输出高风险与阻断数量', () => {

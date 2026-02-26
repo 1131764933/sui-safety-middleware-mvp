@@ -1,10 +1,6 @@
 module safety_middleware::audit {
-    use sui::object::{Self, UID};
-    use sui::tx_context::TxContext;
-    use std::vector;
-
     public struct AuditObject has key, store {
-        id: UID,
+        id: object::UID,
         tx_digest: vector<u8>,
         action: vector<u8>,
         status: bool,
@@ -15,7 +11,7 @@ module safety_middleware::audit {
         tx_digest: vector<u8>,
         action: vector<u8>,
         status: bool,
-        ctx: &mut TxContext
+        ctx: &mut tx_context::TxContext
     ): AuditObject {
         AuditObject {
             id: object::new(ctx),
@@ -24,5 +20,16 @@ module safety_middleware::audit {
             status,
             timestamp: 0,
         }
+    }
+
+    public fun create_and_transfer(
+        tx_digest: vector<u8>,
+        action: vector<u8>,
+        status: bool,
+        ctx: &mut tx_context::TxContext
+    ) {
+        let owner = tx_context::sender(ctx);
+        let audit = create(tx_digest, action, status, ctx);
+        transfer::public_transfer(audit, owner);
     }
 }

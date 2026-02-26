@@ -107,3 +107,27 @@ test('POST /precheck without OPENAI_API_KEY returns 503 when AI required', async
   const data = JSON.parse(res.output.body);
   assert.equal(data.error, 'ai_unavailable');
 });
+
+test('POST /precheck with empty whitelist returns 400', async () => {
+  const res = createMockRes();
+
+  await handlePrecheck(
+    {},
+    res,
+    {
+      address: '0x123',
+      amount: 100,
+      whitelist: [],
+      dailyLimit: 1000
+    },
+    {
+      explainRiskFn: async () => 'should not reach',
+      requireRealAi: true
+    }
+  );
+
+  assert.equal(res.output.statusCode, 400);
+  const data = JSON.parse(res.output.body);
+  assert.equal(data.error, 'invalid_input');
+  assert.equal(data.reason, '白名单参数非法');
+});

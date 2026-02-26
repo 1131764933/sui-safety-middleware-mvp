@@ -26,3 +26,17 @@ test('负数金额 => block', () => {
   assert.equal(result.risk, 'critical');
   assert.equal(result.reason, '输入参数非法');
 });
+
+test('空白名单 => block', () => {
+  const result = precheck({ address: '0x123', amount: 100, whitelist: [], dailyLimit: 1000 });
+  assert.equal(result.action, 'block');
+  assert.equal(result.risk, 'critical');
+  assert.equal(result.reason, '白名单参数非法');
+});
+
+test('零限额 => block', () => {
+  const result = precheck({ address: '0x123', amount: 100, whitelist: ['0x123'], dailyLimit: 0 });
+  assert.equal(result.action, 'block');
+  assert.equal(result.risk, 'critical');
+  assert.equal(result.reason, '输入参数非法');
+});

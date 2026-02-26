@@ -1,4 +1,6 @@
 module safety_middleware::policy {
+    const E_NOT_OWNER: u64 = 1001;
+
     public struct PolicyObject has key, store {
         id: object::UID,
         owner: address,
@@ -21,7 +23,7 @@ module safety_middleware::policy {
     }
 
     public fun update_daily_limit(p: &mut PolicyObject, new_limit: u64, ctx: &mut tx_context::TxContext) {
-        assert!(tx_context::sender(ctx) == p.owner, 1001);
+        assert!(tx_context::sender(ctx) == p.owner, E_NOT_OWNER);
         p.daily_limit = new_limit;
     }
 

@@ -2,3 +2,5 @@
 node_modules/
 .npm-cache/
 contracts/safety_middleware/build/
+.env
+.env.local

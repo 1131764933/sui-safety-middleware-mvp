@@ -3,88 +3,82 @@
 ## 1. 准备步骤
 
 ```bash
-cd /Users/yhb/Desktop/sui-agents/.worktrees/task1-bootstrap
+cd /Users/yhb/Desktop/sui-agents
 npm install
 export OPENAI_API_KEY="your_real_key"
 npm run test
-node apps/backend/src/index.js
 ```
 
-确认后端输出：`[backend] listening on http://127.0.0.1:3000`
-说明：`/precheck` 强制调用真实 OpenAI API；未配置 key 会返回 `503 ai_unavailable`。
+启动服务：
 
-## 2. 浏览器最小演示（推荐）
+```bash
+# 终端1
+PORT=3001 node apps/backend/src/index.js
 
-打开：
+# 终端2
+npm run --workspace apps/frontend dev
+```
 
-`http://127.0.0.1:3000/demo`
+确认：
+- 后端输出：`[backend] listening on http://127.0.0.1:3001`
+- 前端输出：`VITE ... Local: http://127.0.0.1:5173`
 
-页面操作顺序：
-1. 填写交易参数（默认可直接用）
-2. 点击 `1) 预审`
-3. 若返回 `review`，点击 `2) 人工确认`
-4. 点击 `3) 执行`
-5. 点击 `4) 刷新审计`
+前置要求：
+- 浏览器安装并解锁 Sui Wallet 插件
+- 钱包网络切换到 `Testnet`
+- 页面 `Package ID` 默认值为：`0xab52ad97fc2a24e3070b7999fc7eeca5baef006269ac39245f3da7d5caecd5fd`
+
+## 2. YouTube 推荐演示主线（3-5 分钟）
+
+打开：`http://127.0.0.1:5173`
+
+### 段落 A：钱包与链上连接（30-45 秒）
+1. 点击 `Connect Wallet`
+2. 页面显示钱包地址
+3. 说明当前 Network=Testnet、Package ID 已配置
 
 预期：
-- `allow`：可直接执行，审计出现 `status=success`
-- `review`：未确认时执行会被阻断，确认后可执行
-- `block`：执行按钮禁用（前端保护）
-- 状态面板包含 `aiExplanation`（真实 API 返回文本）
+- 状态面板显示 `钱包连接成功`
 
-## 3. 演示路径 A：低风险交易闭环（命令行）
+### 段落 B：预审与闸门（60-90 秒）
+1. 输入交易参数（先用低风险样例：白名单地址 + 小额）
+2. 点击 `1) 预审`，展示 `allow` + `aiExplanation`
+3. 点击 `3) 执行（后端）`
 
-命令：
+预期：
+- 后端执行成功
+- 后端审计表新增一条记录
+
+### 段落 C：链上写入与读取（60-90 秒）
+1. 点击 `4) 上链写审计`（钱包签名）
+2. 状态面板展示链上 `digest` 与 explorer 链接
+3. 点击 `5) 读取链上审计`
+
+预期：
+- 链上审计对象表出现 `AuditObject`
+- 可证明“前端已直连钱包与链上合约”
+
+### 段落 D：风险阻断（45-60 秒）
+1. 输入高风险样例（超限）
+2. 点击 `1) 预审` -> `review`
+3. 不点确认，直接点击 `3) 执行（后端）`
+
+预期：
+- 返回 `blocked`（`review_not_approved`）
+- 强调“默认保守阻断”
+
+## 3. 备用命令行演示（网络不稳定时）
 
 ```bash
 bash scripts/demo-low-risk.sh
-```
-
-预期：
-- `/precheck` 返回 `action=allow`
-- 可继续执行交易并写入审计
-
-截图位：
-- [截图A1：预审返回allow]
-- [截图A2：执行成功状态]
-
-## 4. 演示路径 B：高风险交易 + 人工确认（命令行）
-
-命令：
-
-```bash
 bash scripts/demo-high-risk-review.sh
-```
-
-预期：
-- `/precheck` 返回 `action=review`
-- 经 `/approval/confirm` 后执行成功
-- 审计日志包含本次高风险路径
-
-截图位：
-- [截图B1：预审返回review]
-- [截图B2：人工确认结果]
-- [截图B3：执行成功与审计记录]
-
-## 5. 演示路径 C：失败回退（命令行）
-
-命令：
-
-```bash
 bash scripts/demo-failure-fallback.sh
 ```
 
-预期：
-- 返回 `status=blocked`
-- 原因为 `review_not_approved` 或回退原因
-- 演示“系统宁可阻断也不误执行”
+## 4. 提交页字段对应（防漏填）
 
-截图位：
-- [截图C1：blocked结果]
-
-## 6. 演示结束检查
-
-- 低风险路径可执行
-- 高风险未确认不会执行
-- 回退路径会保守阻断
-- 核心日志可追溯（按 txDigest 查询）
+- Deployment Network：`Testnet`
+- Package ID：`0xab52ad97fc2a24e3070b7999fc7eeca5baef006269ac39245f3da7d5caecd5fd`
+- Project Repo：GitHub 仓库链接
+- Website：Vercel `/demo` 地址
+- Demo Video：YouTube 链接
