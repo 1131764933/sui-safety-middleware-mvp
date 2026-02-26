@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/demo",
+      "destination": "/apps/frontend/public/index.html"
+    },
+    {
+      "source": "/demo/app.js",
+      "destination": "/apps/frontend/public/app.js"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/router.mjs"
+    }
+  ]
+}

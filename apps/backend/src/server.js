@@ -47,17 +47,20 @@ export function createServer() {
     try {
       const url = new URL(req.url, 'http://localhost');
 
-      if (req.method === 'POST' && url.pathname === '/precheck') {
+      if (req.method === 'POST' && (url.pathname === '/precheck' || url.pathname === '/api/precheck')) {
         const body = await readJsonBody(req);
         return handlePrecheck(req, res, body);
       }
 
-      if (req.method === 'POST' && url.pathname === '/approval/confirm') {
+      if (
+        req.method === 'POST' &&
+        (url.pathname === '/approval/confirm' || url.pathname === '/api/approval/confirm')
+      ) {
         const body = await readJsonBody(req);
         return handleApprovalConfirm(req, res, body, approvalsStore);
       }
 
-      if (req.method === 'POST' && url.pathname === '/execute') {
+      if (req.method === 'POST' && (url.pathname === '/execute' || url.pathname === '/api/execute')) {
         const body = await readJsonBody(req);
         return handleExecute(req, res, body, auditStore);
       }
@@ -70,7 +73,7 @@ export function createServer() {
         return serveFile(res, path.join(demoDir, 'app.js'), 'application/javascript; charset=utf-8');
       }
 
-      if (req.method === 'GET' && url.pathname === '/audit') {
+      if (req.method === 'GET' && (url.pathname === '/audit' || url.pathname === '/api/audit')) {
         const txDigest = url.searchParams.get('txDigest');
         return handleAudit(req, res, txDigest, auditStore);
       }

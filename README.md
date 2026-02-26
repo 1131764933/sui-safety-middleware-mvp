@@ -88,6 +88,31 @@ bash scripts/demo-failure-fallback.sh
 
 更多演示细节见：`docs/demo-runbook.md`
 
+## 部署到 Vercel
+
+1. 安装并登录：
+```bash
+npm i -g vercel
+vercel login
+```
+2. 在项目根目录设置环境变量：
+```bash
+vercel env add OPENAI_API_KEY production
+vercel env add OPENAI_API_KEY preview
+```
+3. 首次部署：
+```bash
+vercel
+```
+4. 发布到生产：
+```bash
+vercel --prod
+```
+
+部署后访问：
+- 演示页：`https://<your-domain>/demo`
+- API：`https://<your-domain>/api/precheck`
+
 ## 安全边界说明
 
 见：`docs/security-assumptions.md`

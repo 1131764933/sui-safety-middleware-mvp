@@ -53,7 +53,7 @@ async function postJson(url, body) {
 }
 
 async function refreshAudit() {
-  const data = await fetch('/audit').then((r) => r.json());
+  const data = await fetch('/api/audit').then((r) => r.json());
   const items = data.items ?? [];
   el.auditRows.innerHTML = items
     .slice()
@@ -83,7 +83,7 @@ el.btnPrecheck.addEventListener('click', async () => {
       el.btnExecute.disabled = true;
       return;
     }
-    const result = await postJson('/precheck', payload);
+    const result = await postJson('/api/precheck', payload);
     if (result.error) {
       setStatus('预审失败', result);
       el.btnConfirm.disabled = true;
@@ -110,7 +110,7 @@ el.btnConfirm.addEventListener('click', async () => {
       setStatus('确认失败', { error: '请先预审' });
       return;
     }
-    const result = await postJson('/approval/confirm', {
+    const result = await postJson('/api/approval/confirm', {
       txDigest: current.txDigest,
       approved: true
     });
@@ -131,7 +131,7 @@ el.btnExecute.addEventListener('click', async () => {
     const action = current.precheck.action;
     const approved = action === 'review' ? current.approved : true;
 
-    const result = await postJson('/execute', {
+    const result = await postJson('/api/execute', {
       txDigest: current.txDigest,
       action,
       approved,
