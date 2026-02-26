@@ -19,3 +19,10 @@ test('非白名单 => block', () => {
   assert.equal(result.action, 'block');
   assert.equal(result.risk, 'critical');
 });
+
+test('负数金额 => block', () => {
+  const result = precheck({ address: '0x123', amount: -9, whitelist: ['0x123'], dailyLimit: 1000 });
+  assert.equal(result.action, 'block');
+  assert.equal(result.risk, 'critical');
+  assert.equal(result.reason, '输入参数非法');
+});

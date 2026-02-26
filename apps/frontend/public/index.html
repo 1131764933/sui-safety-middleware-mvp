@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sui Safety Middleware Demo</title>
+    <style>
+      :root {
+        --bg: #f3f8ff;
+        --card: #ffffff;
+        --text: #0b1f44;
+        --sub: #35507a;
+        --ok: #007bff;
+        --warn: #0f85ff;
+        --danger: #0667c8;
+        --line: #cfe1ff;
+        --sui-a: #4da2ff;
+        --sui-b: #7ad3ff;
+        --sui-c: #1d6fe9;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background:
+          radial-gradient(1200px 500px at 0% -10%, rgba(122, 211, 255, 0.35), transparent 60%),
+          radial-gradient(900px 500px at 100% 0%, rgba(77, 162, 255, 0.25), transparent 55%),
+          var(--bg);
+        color: var(--text);
+        font-family: "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        display: grid;
+        gap: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 6px 24px rgba(29, 111, 233, 0.08);
+      }
+      h1 {
+        margin: 0 0 8px 0;
+        font-size: 20px;
+      }
+      p {
+        margin: 0;
+        color: var(--sub);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        border: 1px solid #b8d4ff;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ffffff, #eef6ff);
+        color: #0f3d88;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(29, 111, 233, 0.18);
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+        transform: none;
+        box-shadow: none;
+      }
+      .risk-low { color: var(--ok); }
+      .risk-high { color: var(--warn); }
+      .risk-critical { color: var(--danger); }
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 4px;
+        font-size: 13px;
+      }
+      .card:first-child {
+        background: linear-gradient(135deg, rgba(77, 162, 255, 0.13), rgba(122, 211, 255, 0.2) 55%, rgba(255, 255, 255, 0.95));
+        border-color: #bdd9ff;
+      }
+      .hero {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .logo-badge {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: linear-gradient(160deg, #e6f2ff, #f7fbff);
+        border: 1px solid #bcd9ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 18px rgba(29, 111, 233, 0.14);
+        flex: 0 0 auto;
+      }
+      .hero-text h1 {
+        margin: 0 0 6px 0;
+      }
+      .hero-text p {
+        margin: 0;
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .logo-badge {
+          width: 56px;
+          height: 56px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <div class="hero">
+          <div class="logo-badge" aria-label="Sui logo">
+            <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 6C26 16 14 26 14 39C14 49 22 58 32 58C42 58 50 49 50 39C50 26 38 16 32 6Z" stroke="#1D6FE9" stroke-width="4" fill="url(#g)"/>
+              <path d="M32 18C28 24 22 30 22 38C22 44 26.8 49 32 49C37.2 49 42 44 42 38C42 30 36 24 32 18Z" stroke="#4DA2FF" stroke-width="3" fill="#ffffff"/>
+              <defs>
+                <linearGradient id="g" x1="14" y1="8" x2="50" y2="58" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#7AD3FF"/>
+                  <stop offset="1" stop-color="#4DA2FF"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="hero-text">
+            <h1>Sui Safety Middleware 演示页</h1>
+            <p>闭环：预审 -> 人工确认（可选）-> 执行 -> 审计查询</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div>
+            <label for="address">地址</label>
+            <input id="address" value="0x123" />
+          </div>
+          <div>
+            <label for="amount">金额</label>
+            <input id="amount" type="number" value="100" />
+          </div>
+          <div>
+            <label for="dailyLimit">每日限额</label>
+            <input id="dailyLimit" type="number" value="1000" />
+          </div>
+          <div>
+            <label for="whitelist">白名单（逗号分隔）</label>
+            <input id="whitelist" value="0x123" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="actions">
+          <button id="btnPrecheck">1) 预审</button>
+          <button id="btnConfirm" disabled>2) 人工确认</button>
+          <button id="btnExecute" disabled>3) 执行</button>
+          <button id="btnRefreshAudit">4) 刷新审计</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h1 style="font-size:16px">状态面板</h1>
+        <pre id="statusText">等待操作...</pre>
+      </div>
+
+      <div class="card">
+        <h1 style="font-size:16px">审计日志</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>txDigest</th>
+              <th>action</th>
+              <th>status</th>
+              <th>reason</th>
+            </tr>
+          </thead>
+          <tbody id="auditRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script type="module" src="/demo/app.js"></script>
+  </body>
+</html>

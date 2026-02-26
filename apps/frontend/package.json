@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "echo \"No frontend build yet\" && exit 0",
-    "test": "echo \"No frontend tests yet\" && exit 0",
+    "test": "node --test",
     "lint": "echo \"No frontend lint config yet\" && exit 0"
   }
 }
