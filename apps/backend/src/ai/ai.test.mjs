@@ -13,6 +13,18 @@ test('无 OPENAI_API_KEY 时返回模板解释', async () => {
   if (prev) process.env.OPENAI_API_KEY = prev;
 });
 
+test('requireRealApi=true 且无 key 时抛错', async () => {
+  const prev = process.env.OPENAI_API_KEY;
+  delete process.env.OPENAI_API_KEY;
+
+  await assert.rejects(
+    () => explainRisk({ action: 'allow', risk: 'low', reason: '白名单+小额交易' }, { requireRealApi: true }),
+    /OPENAI_API_KEY is required/
+  );
+
+  if (prev) process.env.OPENAI_API_KEY = prev;
+});
+
 test('有 OPENAI_API_KEY 且 API 失败时自动回退模板', async () => {
   const prev = process.env.OPENAI_API_KEY;
   process.env.OPENAI_API_KEY = 'dummy-key';
@@ -26,6 +38,25 @@ test('有 OPENAI_API_KEY 且 API 失败时自动回退模板', async () => {
     { fetchImpl: failFetch }
   );
   assert.match(text, /高风险交易/);
+
+  if (prev) process.env.OPENAI_API_KEY = prev;
+  else delete process.env.OPENAI_API_KEY;
+});
+
+test('有 OPENAI_API_KEY 时可返回真实 API 文本', async () => {
+  const prev = process.env.OPENAI_API_KEY;
+  process.env.OPENAI_API_KEY = 'dummy-key';
+
+  const okFetch = async () => ({
+    ok: true,
+    json: async () => ({ output_text: 'AI解释：该交易风险可控，建议继续执行。' })
+  });
+
+  const text = await explainRisk(
+    { action: 'allow', risk: 'low', reason: '白名单+小额交易' },
+    { fetchImpl: okFetch, requireRealApi: true }
+  );
+  assert.match(text, /AI解释/);
 
   if (prev) process.env.OPENAI_API_KEY = prev;
   else delete process.env.OPENAI_API_KEY;

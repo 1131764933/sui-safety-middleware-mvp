@@ -16,11 +16,18 @@
 
 - Node.js >= 20
 - Sui CLI >= 1.25（当前已验证：1.66.2）
+- `OPENAI_API_KEY`（必需，预审阶段强制调用真实 API 生成解释）
 
 ## 安装
 
 ```bash
 npm install
+```
+
+## 配置 OpenAI Key
+
+```bash
+export OPENAI_API_KEY="your_real_key"
 ```
 
 ## 运行测试
@@ -54,6 +61,20 @@ node apps/backend/src/index.js
 ```
 
 默认监听 `http://127.0.0.1:3000`。
+
+## 浏览器演示（最小页面）
+
+启动后端后，打开：
+
+`http://127.0.0.1:3000/demo`
+
+页面内按顺序点击：
+1. `预审`
+2. `人工确认`（仅 `review` 需要）
+3. `执行`
+4. `刷新审计`
+
+可直接观察 `allow/review/block`、`aiExplanation` 与审计日志变化。
 
 ## 演示脚本
 

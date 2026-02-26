@@ -3,14 +3,36 @@
 ## 1. 准备步骤
 
 ```bash
+cd /Users/yhb/Desktop/sui-agents/.worktrees/task1-bootstrap
 npm install
+export OPENAI_API_KEY="your_real_key"
 npm run test
 node apps/backend/src/index.js
 ```
 
 确认后端输出：`[backend] listening on http://127.0.0.1:3000`
+说明：`/precheck` 强制调用真实 OpenAI API；未配置 key 会返回 `503 ai_unavailable`。
 
-## 2. 演示路径 A：低风险交易闭环
+## 2. 浏览器最小演示（推荐）
+
+打开：
+
+`http://127.0.0.1:3000/demo`
+
+页面操作顺序：
+1. 填写交易参数（默认可直接用）
+2. 点击 `1) 预审`
+3. 若返回 `review`，点击 `2) 人工确认`
+4. 点击 `3) 执行`
+5. 点击 `4) 刷新审计`
+
+预期：
+- `allow`：可直接执行，审计出现 `status=success`
+- `review`：未确认时执行会被阻断，确认后可执行
+- `block`：执行按钮禁用（前端保护）
+- 状态面板包含 `aiExplanation`（真实 API 返回文本）
+
+## 3. 演示路径 A：低风险交易闭环（命令行）
 
 命令：
 
@@ -26,7 +48,7 @@ bash scripts/demo-low-risk.sh
 - [截图A1：预审返回allow]
 - [截图A2：执行成功状态]
 
-## 3. 演示路径 B：高风险交易 + 人工确认
+## 4. 演示路径 B：高风险交易 + 人工确认（命令行）
 
 命令：
 
@@ -44,7 +66,7 @@ bash scripts/demo-high-risk-review.sh
 - [截图B2：人工确认结果]
 - [截图B3：执行成功与审计记录]
 
-## 4. 演示路径 C：失败回退
+## 5. 演示路径 C：失败回退（命令行）
 
 命令：
 
@@ -60,7 +82,7 @@ bash scripts/demo-failure-fallback.sh
 截图位：
 - [截图C1：blocked结果]
 
-## 5. 演示结束检查
+## 6. 演示结束检查
 
 - 低风险路径可执行
 - 高风险未确认不会执行

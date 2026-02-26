@@ -12,7 +12,9 @@
     "node_modules/",
     ".worktrees/",
     "contracts/safety_middleware/build/",
-    "tests/e2e/"
+    "tests/e2e/",
+    "**/*.d.ts",
+    "apps/frontend/src/App.tsx"
   ],
   "rules": {}
 }

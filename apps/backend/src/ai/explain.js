@@ -10,7 +10,12 @@ function fallbackText(result) {
 
 export async function explainRisk(result, options = {}) {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return fallbackText(result);
+  if (!apiKey) {
+    if (options.requireRealApi) {
+      throw new Error('OPENAI_API_KEY is required for real AI explanation');
+    }
+    return fallbackText(result);
+  }
 
   const fetchImpl = options.fetchImpl || fetch;
   const timeoutMs = options.timeoutMs ?? 3000;
@@ -33,12 +38,23 @@ export async function explainRisk(result, options = {}) {
       signal: controller.signal
     });
 
-    if (!response.ok) return fallbackText(result);
+    if (!response.ok) {
+      if (options.requireRealApi) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+      return fallbackText(result);
+    }
 
     const data = await response.json();
     const text = (data?.output_text || '').trim();
+    if (!text && options.requireRealApi) {
+      throw new Error('OpenAI API returned empty explanation');
+    }
     return text || fallbackText(result);
   } catch {
+    if (options.requireRealApi) {
+      throw new Error('OpenAI API request failed');
+    }
     return fallbackText(result);
   } finally {
     clearTimeout(timer);

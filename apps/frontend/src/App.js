@@ -29,11 +29,11 @@ export class FrontendFlow {
 
   async executeCurrent() {
     if (!this.state.currentTx || !this.state.currentRisk) {
-      return { status: 'blocked', reason: 'no_current_tx' };
+      return { status: 'blocked', reason: 'noCurrentTx' };
     }
 
     if (this.state.currentRisk.action === 'review' && !this.state.confirmed) {
-      return { status: 'blocked', reason: 'review_not_confirmed' };
+      return { status: 'blocked', reason: 'reviewNotConfirmed' };
     }
 
     return this.executeApi({
